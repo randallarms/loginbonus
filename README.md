@@ -1,6 +1,6 @@
 #LOGINBONUS
 
-by Kraken | Link TBA
+by Kraken | https://www.spigotmc.org/resources/loginbonus.52986/
 
 Simple & configurable login bonus plugin for Bukkit on Minecraft 1.12!
 
