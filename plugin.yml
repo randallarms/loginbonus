@@ -1,0 +1,10 @@
+name: LoginBonus
+main: com.kraken.loginbonus.Main
+version: 1.0
+commands: 
+     loginbonus:
+        description: Controls the LoginBonus plugin.
+        usage: /<command> <argument>
+permissions:
+     loginbonus.*:
+        description: Permission for all LoginBonus commands.

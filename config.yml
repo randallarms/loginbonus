@@ -1,0 +1,28 @@
+# ------------------------------------------------------
+# LOGINBONUS Configuration File (config.yml)
+# 
+# Editing the settings in this file will change the way
+# LoginBonus works on your server. To reset this file to
+# its default values, simply delete your config.yml and
+# stop/restart your server.
+# ------------------------------------------------------
+#
+# LOADED MARKER | Dummy value to check against at start-up, don't change!
+loaded: true
+# 
+# ENABLED | If true, players will receive the configured login bonus item daily.
+enabled: true
+#
+# LOGIN BONUS | This is the string-format name id of the item to give the player on login.
+bonus: diamond
+#
+# LANGUAGE | Currently supported languages: English only (for now!)
+language: English
+# 
+# SILENT MODE | If true, most messages will not be relayed to players.
+silentMode: false
+# 
+# PERMISSIONS REQUIREMENT | If true, players must have the proper permissions to use basic LoginBonus commands.
+permissions: false
+#
+# FOR MORE INFO | Link TBA
