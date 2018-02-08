@@ -4,6 +4,7 @@ by Kraken | Link TBA
 
 Simple & configurable login bonus plugin for Bukkit on Minecraft 1.12!
 
+HOW TO INSTALL AND USE: https://www.spigotmc.org/resources/loginbonus.52986/
 
 Guides & plugin to be updated consistently! This plugin is far from complete, and represents an open-source, work-in-progress project.
 
