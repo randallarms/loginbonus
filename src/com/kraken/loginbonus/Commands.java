@@ -1,7 +1,9 @@
 package com.kraken.loginbonus;
 
+import java.util.Arrays;
 import java.util.WeakHashMap;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class Commands {
@@ -80,6 +82,37 @@ public class Commands {
 						//Command handling switch
 						switch ( args[0].toLowerCase() ) {
 						
+							//Command: loginbonus item
+							case "item":
+							case "bonus":
+							
+								String item = args[1].toLowerCase();
+								
+								//Language command handling
+								if ( Arrays.asList(Material.values()).contains( item ) ) {
+									
+									plugin.setBonus(item);
+									
+									if ( !isPlayer ) {
+										plugin.consoleMsg("cmdBonusSet");
+									} else {
+										plugin.msg(player, "cmdBonus");
+									}
+									
+									return true;
+								
+								//Language command error handling
+								} else {
+									
+									if ( !isPlayer ) {
+										plugin.consoleMsg("errorBonusSet");
+									} else {
+										plugin.msg(player, "errorBonusNotFound");
+									}
+									
+									return true;
+								}
+							
 							//Command: loginbonus language
 							case "language":
 							case "lang":
