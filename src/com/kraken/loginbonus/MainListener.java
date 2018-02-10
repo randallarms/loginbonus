@@ -1,12 +1,16 @@
 package com.kraken.loginbonus;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.WeakHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +26,8 @@ public class MainListener implements Listener {
 	Main plugin;
 	WeakHashMap<String, Boolean> options = new WeakHashMap<>();
 	String language;
+	
+	ArrayList<Player> cooldown = new ArrayList<>();
 	
 	//Players logins file
 	File loginsFile = new File("plugins/LoginBonus", "logins.yml");
@@ -43,13 +49,12 @@ public class MainListener implements Listener {
     	this.language = language;
     }
     
-	public void loginBonus(Player player, String date) {
+	public void loginBonus(Player player, String date, boolean forceBonus) {
     	
     	//Get the id of the login bonus item
     	String id = plugin.getConfig().getString("bonus");
     	
 		ItemStack item;
-		String items = new String();
 		
     	//Create & give the item
     	try {
@@ -58,10 +63,9 @@ public class MainListener implements Listener {
     		
     		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-    		
-    		@SuppressWarnings("deprecation")
-    		Date lastDate = new Date( loginsConfig.getString(UUIDString + ".last") );
-    		String last = dateFormat.format(lastDate);
+    	
+    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+    		String last = dateFormat.format( formatter.parse( loginsConfig.getString(UUIDString + ".last") ) );
     		
     		Integer total = loginsConfig.getInt(UUIDString + ".total");
     		String playerName = loginsConfig.getString(UUIDString + ".name");
@@ -70,27 +74,37 @@ public class MainListener implements Listener {
     			loginsConfig.set( UUIDString + ".name", player.getName() );
     		}
     		
-    		if ( last != date ) {
+    		if ( !last.equalsIgnoreCase(date) || forceBonus ) {
     			
         		item = new ItemStack( Material.matchMaterial(id) );
             	PlayerInventory inv = player.getInventory();
             	inv.addItem(item);
-            	items += item.getItemMeta().getDisplayName();
             	
             	loginsConfig.set( UUIDString + ".total", total++ );
             	loginsConfig.set( UUIDString + ".last", date );
+            	
+            	//Message player with login bonus items info
+            	plugin.messenger.makeMsg(player, "eventLoginBonus");
+            	player.sendMessage("Last: " + last);
+            	player.sendMessage("Date: " + date);
     			
     		}
     		
-    	} catch (NullPointerException npe) {
+        	try {
+    			loginsConfig.save(loginsFile);
+    		} catch (IOException e) {
+    			//No need to fuss...
+    		}
+    		
+    	} catch (NullPointerException e) {
     		
     		plugin.messenger.makeMsg(player, "errorBonusID");
-    		items = "n/a";
     		
-    	}
-    	
-    	//Message player with login bonus items info
-    	plugin.messenger.makeMsg(player, "eventLoginBonus");
+    	} catch (ParseException e1) {
+
+    		plugin.messenger.makeMsg(player, "errorBonusID");
+    		
+		}
     	
     }
     
@@ -102,6 +116,12 @@ public class MainListener implements Listener {
     	loginsConfig.set(UUIDString + ".total", 1 );
     	loginsConfig.set(UUIDString + ".last", date);
     	
+    	try {
+			loginsConfig.save(loginsFile);
+		} catch (IOException e) {
+			//No need to fuss...
+		}
+    	
     }
     
     @EventHandler
@@ -110,6 +130,10 @@ public class MainListener implements Listener {
     	Player player = e.getPlayer();
     	String UUIDString = player.getUniqueId().toString();
     	
+    	if ( cooldown.contains(player) ) {
+    		return;
+    	}
+    	
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		Date date = new Date();
@@ -117,9 +141,18 @@ public class MainListener implements Listener {
     	
     	if ( !loginsConfig.getKeys(false).contains(UUIDString) ) {
     		createLoginsProfile(player, simpleDate);
+    		loginBonus(player, simpleDate, true);
     	} else {
-    		loginBonus(player, simpleDate);
+    		loginBonus(player, simpleDate, false);
     	}
+    	
+    	cooldown.add(player);
+    	
+    	Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+    		public void run() {
+    			cooldown.remove(player);
+    		}
+    	}, 1000 );
     	
     }
     

@@ -1,5 +1,5 @@
 // =========================================================================
-// |LOGINBONUS v1.0 | for Minecraft v1.12
+// |LOGINBONUS v1.1 | for Minecraft v1.12
 // | by Kraken | Link TBA
 // | code inspired by various Bukkit & Spigot devs -- thank you.
 // |
@@ -26,7 +26,7 @@ import org.bukkit.Bukkit;
 public class Main extends JavaPlugin implements Listener {
 	
 	//Lang vars
-	public static String VERSION = "1.0";
+	public static String VERSION = "1.1";
 	String language;
 	ArrayList<String> languages = new ArrayList<String>();
 	Messages messenger;
@@ -95,6 +95,13 @@ public class Main extends JavaPlugin implements Listener {
     	options.put(option, setting);
     	listener.setOption(option, setting);
     	getLogger().info(option + " setting: " + setting );
+    }
+    
+    //Options setting
+    public void setBonus(String setting) {
+    	getConfig().set("bonus", setting);
+    	saveConfig();
+    	getLogger().info("Bonus item set to: " + setting );
     }
     
     //Language setting
